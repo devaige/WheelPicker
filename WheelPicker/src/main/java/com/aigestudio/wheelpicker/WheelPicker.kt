@@ -118,11 +118,12 @@ open class WheelPicker @JvmOverloads constructor(
      */
     override var maximumWidthText: String? = null
         set(value) {
-            if (value == null) throw NullPointerException("Maximum width text can not be null!")
-            field = value
-            computeTextSize()
-            requestLayout()
-            invalidate()
+            if (value != null) {
+                field = value
+                computeTextSize()
+                requestLayout()
+                invalidate()
+            }
         }
 
     /**
@@ -319,15 +320,12 @@ open class WheelPicker @JvmOverloads constructor(
      */
     override var maximumWidthTextPosition: Int = -1
         set(value) {
-            if (!isPosInRang(value)) {
-                throw ArrayIndexOutOfBoundsException(
-                    "Maximum width text Position must in [0, ${data?.size ?: 0}), but current is $value"
-                )
+            if (isPosInRang(value)) {
+                field = value
+                computeTextSize()
+                requestLayout()
+                invalidate()
             }
-            field = value
-            computeTextSize()
-            requestLayout()
-            invalidate()
         }
 
     /**
@@ -449,8 +447,14 @@ open class WheelPicker @JvmOverloads constructor(
         visibleItemCount = a.getInt(R.styleable.WheelPicker_wheel_visible_item_count, 7)
         selectedItemPosition = a.getInt(R.styleable.WheelPicker_wheel_selected_item_position, 0)
         hasSameWidth = a.getBoolean(R.styleable.WheelPicker_wheel_same_width, false)
-        maximumWidthTextPosition = a.getInt(R.styleable.WheelPicker_wheel_maximum_width_text_position, -1)
-        maximumWidthText = a.getString(R.styleable.WheelPicker_wheel_maximum_width_text)
+        val pos = a.getInt(R.styleable.WheelPicker_wheel_maximum_width_text_position, -1)
+        if (pos != -1) {
+            maximumWidthTextPosition = pos
+        }
+        val maxWidthText = a.getString(R.styleable.WheelPicker_wheel_maximum_width_text)
+        if (maxWidthText != null) {
+            maximumWidthText = maxWidthText
+        }
         selectedItemTextColor = a.getColor(R.styleable.WheelPicker_wheel_selected_item_text_color, -1)
         itemTextColor = a.getColor(R.styleable.WheelPicker_wheel_item_text_color, -0x777778) // 0xFF888888
         itemSpace = a.getDimensionPixelSize(
