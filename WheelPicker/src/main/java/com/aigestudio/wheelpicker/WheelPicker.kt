@@ -3,8 +3,6 @@ package com.aigestudio.wheelpicker
 import android.content.Context
 import android.graphics.*
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
@@ -13,9 +11,6 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.Scroller
-import com.aigestudio.wheelpicker.IWheelPicker.Companion.ALIGN_CENTER
-import com.aigestudio.wheelpicker.IWheelPicker.Companion.ALIGN_LEFT
-import com.aigestudio.wheelpicker.IWheelPicker.Companion.ALIGN_RIGHT
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.cos
@@ -38,7 +33,7 @@ import kotlin.math.sin
 open class WheelPicker @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
-) : View(context, attrs), IDebug, IWheelPicker, Runnable {
+) : View(context, attrs), IDebug, IWheelPicker {
 
     companion object {
         /**
@@ -62,7 +57,6 @@ open class WheelPicker @JvmOverloads constructor(
         private val TAG = WheelPicker::class.java.simpleName
     }
 
-    private val handler = Handler(Looper.getMainLooper())
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG or Paint.LINEAR_TEXT_FLAG)
     private val scroller: Scroller = Scroller(context)
     private var tracker: VelocityTracker? = null
@@ -413,6 +407,11 @@ open class WheelPicker @JvmOverloads constructor(
      * 是否为强制结束滑动
      */
     private var isForceFinishScroll = false
+    
+    /**
+     * 是否正在滚动
+     */
+    private var isScrolling = false
 
     private var isDebug = false
 
@@ -470,12 +469,10 @@ open class WheelPicker @JvmOverloads constructor(
 
         computeTextSize()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
-            val conf = ViewConfiguration.get(context)
-            minimumVelocity = conf.scaledMinimumFlingVelocity
-            maximumVelocity = conf.scaledMaximumFlingVelocity
-            touchSlop = conf.scaledTouchSlop
-        }
+        val conf = ViewConfiguration.get(context)
+        minimumVelocity = conf.scaledMinimumFlingVelocity
+        maximumVelocity = conf.scaledMaximumFlingVelocity
+        touchSlop = conf.scaledTouchSlop
     }
 
     private fun updateVisibleItemCount() {
@@ -779,6 +776,7 @@ open class WheelPicker @JvmOverloads constructor(
                     scroller.abortAnimation()
                     isForceFinishScroll = true
                 }
+                isScrolling = false // 任何按下操作都意味着之前的自动滚动必须结束（如果还在滚的话）
                 lastPointY = event.y.toInt()
                 downPointY = lastPointY
             }
@@ -823,7 +821,11 @@ open class WheelPicker @JvmOverloads constructor(
                             maxFlingY else if (scroller.finalY < minFlingY) scroller.finalY =
                             minFlingY
                     }
-                    handler.post(this)
+                    
+                    // 开始滚动
+                    isScrolling = true
+                    invalidate()
+                    
                     tracker?.recycle()
                     tracker = null
                 }
@@ -845,24 +847,29 @@ open class WheelPicker @JvmOverloads constructor(
         }
     }
 
-    override fun run() {
-        val size = data?.size ?: 0
-        if (size == 0) return
-        if (scroller.isFinished && !isForceFinishScroll) {
-            if (itemHeight == 0) return
-            var position = (-scrollOffsetY / itemHeight + selectedItemPosition) % size
-            position = if (position < 0) position + size else position
-            if (isDebug) Log.i(TAG, "$position:${data!![position]}:$scrollOffsetY")
-            currentItemPosition = position
-            onItemSelectedListener?.onItemSelected(this, data!![position], position)
-            onWheelChangeListener?.onWheelSelected(position)
-            onWheelChangeListener?.onWheelScrollStateChanged(SCROLL_STATE_IDLE)
-        }
+    override fun computeScroll() {
+        if (isForceFinishScroll) return
+        
         if (scroller.computeScrollOffset()) {
             onWheelChangeListener?.onWheelScrollStateChanged(SCROLL_STATE_SCROLLING)
             scrollOffsetY = scroller.currY
             postInvalidate()
-            handler.postDelayed(this, 16)
+        } else {
+            // 滚动停止
+            if (isScrolling) {
+                isScrolling = false
+                val size = data?.size ?: 0
+                if (size > 0) {
+                     var position = (-scrollOffsetY / itemHeight + selectedItemPosition) % size
+                     position = if (position < 0) position + size else position
+                     if (isDebug) Log.i(TAG, "$position:${data!![position]}:$scrollOffsetY")
+                     
+                     currentItemPosition = position
+                     onItemSelectedListener?.onItemSelected(this, data!![position], position)
+                     onWheelChangeListener?.onWheelSelected(position)
+                }
+                onWheelChangeListener?.onWheelScrollStateChanged(SCROLL_STATE_IDLE)
+            }
         }
     }
 
