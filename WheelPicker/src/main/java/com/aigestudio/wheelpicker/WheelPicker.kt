@@ -686,7 +686,14 @@ open class WheelPicker @JvmOverloads constructor(
             if (selectedItemTextColor != -1) {
                 canvas.save()
                 if (isCurved) canvas.concat(matrixRotate)
-                canvas.clipRect(rectCurrentItem, Region.Op.DIFFERENCE)
+                // 修复 clipRect 废弃 API
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    canvas.clipOutRect(rectCurrentItem)
+                } else {
+                    @Suppress("DEPRECATION")
+                    canvas.clipRect(rectCurrentItem, Region.Op.DIFFERENCE)
+                }
+                
                 canvas.drawText(dataStr, drawnCenterX.toFloat(), itemDrawnCenterY.toFloat(), paint)
                 canvas.restore()
 
@@ -798,11 +805,7 @@ open class WheelPicker @JvmOverloads constructor(
             MotionEvent.ACTION_UP -> {
                 parent?.requestDisallowInterceptTouchEvent(false)
                 if (!isClick) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
-                        tracker?.computeCurrentVelocity(1000, maximumVelocity.toFloat())
-                    } else {
-                        tracker?.computeCurrentVelocity(1000)
-                    }
+                    tracker?.computeCurrentVelocity(1000, maximumVelocity.toFloat())
 
                     isForceFinishScroll = false
                     val velocity = tracker?.yVelocity?.toInt() ?: 0
