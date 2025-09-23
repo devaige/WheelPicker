@@ -26,10 +26,23 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14" // Matches Kotlin 1.9.24
+    }
 }
 
 dependencies {
     implementation(libs.gson)
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.appcompat)
+
+    // Compose Support
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.runtime)
 }

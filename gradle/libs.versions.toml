@@ -4,6 +4,7 @@ kotlin = "1.9.24"
 appcompat = "1.7.0"
 material = "1.12.0"
 gson = "2.10.1"
+compose-bom = "2024.12.01"
 compileSdk = "36"
 minSdk = "21"
 targetSdk = "36"
@@ -11,6 +12,9 @@ targetSdk = "36"
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
