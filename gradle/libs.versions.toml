@@ -8,6 +8,7 @@ compose-bom = "2024.12.01"
 compileSdk = "36"
 minSdk = "21"
 targetSdk = "36"
+vanniktech-maven-publish = "0.30.0"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -22,3 +23,4 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-maven-publish" }
