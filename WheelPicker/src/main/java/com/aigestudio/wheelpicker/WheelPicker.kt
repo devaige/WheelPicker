@@ -777,12 +777,12 @@ open class WheelPicker @JvmOverloads constructor(
         tracker?.addMovement(event)
         
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
+            MMotionEvent.ACTION_DOWN -> {
                 parent?.requestDisallowInterceptTouchEvent(true)
                 if (!scroller.isFinished) {
                     scroller.abortAnimation()
                     isForceFinishScroll = true
-                    
+
                     // FIXED: Captures the nearest square immediately when your finger presses while rotating.
                     val remainder = scrollOffsetY.rem(itemHeight)
                     val snapOffset = computeDistanceToEndPoint(remainder)
@@ -794,6 +794,20 @@ open class WheelPicker @JvmOverloads constructor(
                         }
                         invalidate()
                     }
+
+                    // Calculate position and call fire again — copy logic from CalculateScroll()
+                    val size = data?.size ?: 0
+                    if (size > 0) {
+                        var position = (-scrollOffsetY / itemHeight + selectedItemPosition) % size
+                        position = if (position < 0) position + size else position
+
+                        currentItemPosition = position
+                        onItemSelectedListener?.onItemSelected(this, data!![position], position)
+                        onWheelChangeListener?.onWheelSelected(position)
+                        onWheelChangeListener?.onWheelScrollStateChanged(SCROLL_STATE_IDLE)
+                    }
+
+                    invalidate()
                 }
                 isScrolling = false
                 lastPointY = event.y.toInt()
