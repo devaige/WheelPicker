@@ -783,12 +783,12 @@ open class WheelPicker @JvmOverloads constructor(
                     scroller.abortAnimation()
                     isForceFinishScroll = true
                     
-                    // ✅ FIX: Snap về ô gần nhất ngay khi tay ấn vào lúc đang xoay
+                    // FIXED: Captures the nearest square immediately when your finger presses while rotating.
                     val remainder = scrollOffsetY.rem(itemHeight)
                     val snapOffset = computeDistanceToEndPoint(remainder)
                     if (snapOffset != 0) {
                         scrollOffsetY += snapOffset
-                        // Clamp trong giới hạn nếu không cyclic
+                        // Clamp within limits if not cyclic
                         if (!isCyclic) {
                             scrollOffsetY = scrollOffsetY.coerceIn(minFlingY, maxFlingY)
                         }
