@@ -782,8 +782,20 @@ open class WheelPicker @JvmOverloads constructor(
                 if (!scroller.isFinished) {
                     scroller.abortAnimation()
                     isForceFinishScroll = true
+                    
+                    // ✅ FIX: Snap về ô gần nhất ngay khi tay ấn vào lúc đang xoay
+                    val remainder = scrollOffsetY.rem(itemHeight)
+                    val snapOffset = computeDistanceToEndPoint(remainder)
+                    if (snapOffset != 0) {
+                        scrollOffsetY += snapOffset
+                        // Clamp trong giới hạn nếu không cyclic
+                        if (!isCyclic) {
+                            scrollOffsetY = scrollOffsetY.coerceIn(minFlingY, maxFlingY)
+                        }
+                        invalidate()
+                    }
                 }
-                isScrolling = false // 任何按下操作都意味着之前的自动滚动必须结束（如果还在滚的话）
+                isScrolling = false
                 lastPointY = event.y.toInt()
                 downPointY = lastPointY
             }
