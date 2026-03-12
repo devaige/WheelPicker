@@ -857,6 +857,31 @@ open class WheelPicker @JvmOverloads constructor(
                     
                     tracker?.recycle()
                     tracker = null
+                } else {
+                    val wasForceFinish = isForceFinishScroll
+                    isForceFinishScroll = false
+                    if (!wasForceFinish && itemHeight > 0) {
+                        val clickItemOffset = Math.floor((event.y - wheelCenterY + halfItemHeight).toDouble() / itemHeight).toInt()
+                        if (clickItemOffset != 0) {
+                            var scrollDistance = -clickItemOffset * itemHeight
+                            if (!isCyclic) {
+                                val targetScrollY = scrollOffsetY + scrollDistance
+                                if (targetScrollY < minFlingY) {
+                                    scrollDistance = minFlingY - scrollOffsetY
+                                } else if (targetScrollY > maxFlingY) {
+                                    scrollDistance = maxFlingY - scrollOffsetY
+                                }
+                            }
+                            
+                            if (scrollDistance != 0) {
+                                scroller.startScroll(0, scrollOffsetY, 0, scrollDistance)
+                                isScrolling = true
+                                invalidate()
+                            }
+                        }
+                    }
+                    tracker?.recycle()
+                    tracker = null
                 }
             }
             MotionEvent.ACTION_CANCEL -> {
