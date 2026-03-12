@@ -777,13 +777,39 @@ open class WheelPicker @JvmOverloads constructor(
         tracker?.addMovement(event)
         
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
+            MMotionEvent.ACTION_DOWN -> {
                 parent?.requestDisallowInterceptTouchEvent(true)
                 if (!scroller.isFinished) {
                     scroller.abortAnimation()
                     isForceFinishScroll = true
+
+                    // FIXED: Captures the nearest square immediately when your finger presses while rotating.
+                    val remainder = scrollOffsetY.rem(itemHeight)
+                    val snapOffset = computeDistanceToEndPoint(remainder)
+                    if (snapOffset != 0) {
+                        scrollOffsetY += snapOffset
+                        // Clamp within limits if not cyclic
+                        if (!isCyclic) {
+                            scrollOffsetY = scrollOffsetY.coerceIn(minFlingY, maxFlingY)
+                        }
+                        invalidate()
+                    }
+
+                    // Calculate position and call fire again — copy logic from CalculateScroll()
+                    val size = data?.size ?: 0
+                    if (size > 0) {
+                        var position = (-scrollOffsetY / itemHeight + selectedItemPosition) % size
+                        position = if (position < 0) position + size else position
+
+                        currentItemPosition = position
+                        onItemSelectedListener?.onItemSelected(this, data!![position], position)
+                        onWheelChangeListener?.onWheelSelected(position)
+                        onWheelChangeListener?.onWheelScrollStateChanged(SCROLL_STATE_IDLE)
+                    }
+
+                    invalidate()
                 }
-                isScrolling = false // 任何按下操作都意味着之前的自动滚动必须结束（如果还在滚的话）
+                isScrolling = false
                 lastPointY = event.y.toInt()
                 downPointY = lastPointY
             }
