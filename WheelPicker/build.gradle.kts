@@ -38,14 +38,14 @@ android {
 }
 
 dependencies {
-    implementation(libs.gson)
-    implementation(libs.kotlin.stdlib)
-    implementation(libs.androidx.appcompat)
+    compileOnly(libs.gson)
+    compileOnly(libs.kotlin.stdlib)
+    compileOnly(libs.androidx.appcompat)
 
     // Compose Support
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.runtime)
+    compileOnly(platform(libs.androidx.compose.bom))
+    compileOnly(libs.androidx.compose.ui)
+    compileOnly(libs.androidx.compose.runtime)
 }
 
 mavenPublishing {
