@@ -14,14 +14,31 @@
 # Include
 ### Compile
 ```Gradle
-implementation 'dev.aige.pub:WheelPicker:1.2.1'
+implementation 'dev.aige.pub:WheelPicker:1.2.2'
 ```
+
+> **Note / 注意**  
+> Since `1.2.2`, internal dependencies are marked as `compileOnly`. Please ensure you have added the following dependencies to your project manually to avoid exceptions.  
+> 自 `1.2.2` 版本起，为了解决依赖冲突内部库已被标记为 `compileOnly`。请确保您的项目 `build.gradle` 中已手动添加以下依赖：
+
+```Gradle
+// Core Dependencies / 核心依赖
+implementation("org.jetbrains.kotlin:kotlin-stdlib:<version>")
+implementation("androidx.appcompat:appcompat:<version>")
+implementation("com.google.code.gson:gson:<version>")
+
+// Compose Support (Optional) / Jetpack Compose 支持（可选）
+implementation(platform("androidx.compose:compose-bom:<version>"))
+implementation("androidx.compose.ui:ui")
+implementation("androidx.compose.runtime:runtime")
+```
+
 or
 ```Maven
 <dependency>
   <groupId>dev.aige.pub</groupId>
   <artifactId>WheelPicker</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
   <type>pom</type>
 </dependency>
 ```
@@ -30,6 +47,14 @@ or
 [WIKI](https://github.com/AigeStudio/WheelPicker/wiki/WIKI) | [帮助文档](https://github.com/AigeStudio/WheelPicker/wiki/%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
 
 # Versions
+### 1.2.2
+* Feature: Support click on adjacent items to switch quickly
+* BugFix: WheelPicker stops between two items when fling is interrupted by touch
+* Optimization: Mark dependencies as `compileOnly`
+* 新增：支持点击相邻数据以快速切换选中项
+* 修复：滑动过程中被触摸中断时，内容可能停在两项之间的问题
+* 优化：将依赖库标记为 `compileOnly` 避免版本冲突
+
 ### 1.2.1
 * Feature: Support Kotlin-style function interface for `OnItemSelectedListener`
 * 新增 `OnItemSelectedListener` 的 Kotlin 函数式接口支持
