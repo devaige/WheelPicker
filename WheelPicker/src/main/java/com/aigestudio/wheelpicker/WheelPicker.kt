@@ -925,6 +925,20 @@ open class WheelPicker @JvmOverloads constructor(
         onItemSelectedListener = listener
     }
 
+    /**
+     * 设置滚轮选择器Item被选中监听器（Kotlin DSL风格）
+     * Set listener for item selected (Kotlin Style)
+     *
+     * @param listener 监听器回调 Listener callback
+     */
+    fun setOnItemSelectedListener(listener: (picker: WheelPicker, data: Any?, position: Int) -> Unit) {
+        setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onItemSelected(picker: WheelPicker, data: Any?, position: Int) {
+                listener(picker, data, position)
+            }
+        })
+    }
+
     override var typeface: Typeface?
         get() = paint.typeface
         set(value) {

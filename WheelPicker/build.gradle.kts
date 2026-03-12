@@ -49,7 +49,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("dev.aige.pub", "WheelPicker", "1.2.0")
+    coordinates("dev.aige.pub", "WheelPicker", "1.2.1")
 
     pom {
         name.set("WheelPicker")

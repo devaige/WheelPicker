@@ -14,14 +14,14 @@
 # Include
 ### Compile
 ```Gradle
-implementation 'dev.aige.pub:WheelPicker:1.2.0'
+implementation 'dev.aige.pub:WheelPicker:1.2.1'
 ```
 or
 ```Maven
 <dependency>
   <groupId>dev.aige.pub</groupId>
   <artifactId>WheelPicker</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -30,6 +30,10 @@ or
 [WIKI](https://github.com/AigeStudio/WheelPicker/wiki/WIKI) | [帮助文档](https://github.com/AigeStudio/WheelPicker/wiki/%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
 
 # Versions
+### 1.2.1
+* Feature: Support Kotlin-style function interface for `OnItemSelectedListener`
+* 新增 `OnItemSelectedListener` 的 Kotlin 函数式接口支持
+
 ### 1.2.0
 * Feature: Support Jetpack Compose
 * Feature: Migrate to Maven Central (New Group ID: dev.aige.pub)
