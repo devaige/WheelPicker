@@ -777,7 +777,7 @@ open class WheelPicker @JvmOverloads constructor(
         tracker?.addMovement(event)
         
         when (event.action) {
-            MMotionEvent.ACTION_DOWN -> {
+            MotionEvent.ACTION_DOWN -> {
                 parent?.requestDisallowInterceptTouchEvent(true)
                 if (!scroller.isFinished) {
                     scroller.abortAnimation()
