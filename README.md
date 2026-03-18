@@ -14,7 +14,7 @@
 # Include
 ### Compile
 ```Gradle
-implementation 'dev.aige.pub:WheelPicker:1.2.2'
+implementation 'dev.aige.pub:WheelPicker:1.2.3'
 ```
 
 > **Note / 注意**  
@@ -38,7 +38,7 @@ or
 <dependency>
   <groupId>dev.aige.pub</groupId>
   <artifactId>WheelPicker</artifactId>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <type>pom</type>
 </dependency>
 ```
@@ -47,6 +47,10 @@ or
 [WIKI](https://github.com/AigeStudio/WheelPicker/wiki/WIKI) | [帮助文档](https://github.com/AigeStudio/WheelPicker/wiki/%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
 
 # Versions
+### 1.2.3
+* BugFix: `WheelYearPicker` / `WheelMonthPicker` / `WheelDayPicker` throws `UnsupportedOperationException` when inflated inside `WheelDatePicker` (Kotlin virtual dispatch calling overridden `data` setter during parent `init`)
+* 修复：`WheelYearPicker`/`WheelMonthPicker`/`WheelDayPicker` 在 `WheelDatePicker` 内 inflate 时抛出 `UnsupportedOperationException`（Kotlin 虚派发在父类 `init` 阶段调用了子类重写的 `data` setter）
+
 ### 1.2.2
 * Feature: Support click on adjacent items to switch quickly
 * BugFix: WheelPicker stops between two items when fling is interrupted by touch

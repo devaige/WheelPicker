@@ -80,12 +80,21 @@ open class WheelPicker @JvmOverloads constructor(
     private val matrixDepth = Matrix()
 
     /**
-     * 数据源
+     * 数据源 backing field（显式声明，避免父类 init 中赋值因 Kotlin 虚派发触发子类 setter 而崩溃）
      */
-    override var data: List<*>? = null
+    private var _data: List<*>? = null
+
+    /**
+     * 数据源
+     *
+     * 注意：子类若需要禁止外部调用 setData，可 override setter 并 throw。
+     * 父类内部初始化请通过 [_data] 直接赋值，不要通过此属性（会虚派发到子类）。
+     */
+    override var data: List<*>?
+        get() = _data
         set(value) {
             if (value == null) throw NullPointerException("WheelPicker's data can not be null!")
-            field = value
+            _data = value
             // 重置位置
             if (selectedItemPosition > value.size - 1 || currentItemPosition > value.size - 1) {
                 selectedItemPosition = value.size - 1
@@ -423,8 +432,10 @@ open class WheelPicker @JvmOverloads constructor(
             if (idData == 0) R.array.WheelArrayDefault else idData
         )
         
+        // 直接写 backing field，不经过可被子类 override 的 setter，
+        // 避免 Kotlin 虚派发在初始化阶段调用子类（如 WheelYearPicker）重写的 setter 抛出异常
         @Suppress("UNCHECKED_CAST")
-        data = dataArray.toList()
+        _data = dataArray.toList()
         
         itemTextSize = a.getDimensionPixelSize(
             R.styleable.WheelPicker_wheel_item_text_size,
